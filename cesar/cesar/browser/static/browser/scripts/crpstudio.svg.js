@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Copyright (c) 2017 Radboud University Nijmegen.
  * All rights reserved.
  *
@@ -159,7 +159,7 @@ var crpstudio = (function ($, crpstudio) {
           $(sDiv).find("div").append(svgDoc); */
           /* */
           // Create an <svg> element
-          lHtml.push("<svg width=\"1047px\" height=\"542px\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">");
+          lHtml.push("<svg width=\"1047px\" height=\"542px\" version=\"1.2\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\">");
           /* */
           // Create defs
           lHtml.push("<defs >");

@@ -992,6 +992,10 @@ class SentenceDetailView(DetailView):
             status = initial['status']
         context['status'] = status
 
+        # Add user details information
+        context['is_browser_editor'] = user_is_ingroup(self.request, "browser_editor")
+        context['is_superuser'] = user_is_superuser(self.request)
+
         # Fetch the TREE belonging to this sentence
         sentence = context['sentence']
         options = {'userid': get_current_userid(),

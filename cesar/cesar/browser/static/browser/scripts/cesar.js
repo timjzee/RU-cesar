@@ -1,4 +1,4 @@
-﻿var django = {
+var django = {
   "jQuery": jQuery.noConflict(true)
 };
 var jQuery = django.jQuery;
@@ -20,12 +20,27 @@ var $ = jQuery;
 
 // var $ = django.jQuery.noConflict();
 
+function html(strings, ...values) {
+  // strings = array van vaste delen
+  // values  = array van ingevoegde waarden
+
+  let result = "";
+  strings.forEach((str, i) => {
+    result += str + (values[i] ?? "");
+  });
+
+  const template = document.createElement("template");
+  template.innerHTML = result.trim();
+  return template.content.firstElementChild;
+}
+
 var ru = (function ($, ru) {
   "use strict";
 
   ru.cesar = (function ($, config) {
     // Define variables for ru.collbank here
     var loc_example = "",
+        loc_browserMode = "view",     // Edit or view mode of browser
         loc_divErr = "sentdetails_err",
         oSyncTimer = null;
 
@@ -63,6 +78,129 @@ var ru = (function ($, ru) {
         $("#sentence-list .line-text a").bind('click', ru.cesar.sent_click);
       },
     
+      /**
+       *  browser_mode
+       *      Switch mode between edit and view
+       *
+       */
+      browser_mode: function (el, mode) {
+        var elSpan = null,
+            svgDiv = "#sentdetails_tree";
+
+        try {
+          elSpan = $(el).closest("span");
+          if ($(el).hasClass("edit-mode")) {
+            // Switch to edit mode
+            loc_browserMode = "edit";
+            // Change the handling function
+            $(svgDiv).find(".lithium-node").unbind("click").click(ru.cesar.node_click);
+            // $(svgDiv).attr("contentEditable", "true");
+            // Change the buttons
+            $(elSpan).find(".edit-mode").addClass("hidden");
+            $(elSpan).find(".view-mode").removeClass("hidden");
+          } else {
+            // Switch to view mode
+            loc_browserMode = "view";
+            // Change the handling function
+            $(svgDiv).find(".lithium-node").unbind("click").click(function () { crpstudio.svg.node_fix_svg(this) });
+            // $(svgDiv).attr("contentEditable", "");
+            // Change the buttons
+            $(elSpan).find(".view-mode").addClass("hidden");
+            $(elSpan).find(".edit-mode").removeClass("hidden");
+          }
+
+        } catch (ex) {
+          private_methods.errMsg("browser_mode", ex);
+        }
+      },
+
+      /**
+       *  node_click
+       *      When the user clicks a node, allow editing the tag
+       *
+       */
+      node_click: function (evt) {
+        const bbox = evt.target.getBBox(), //evt.target.getBoundingClientRect(),
+              value = evt.target.innerHTML;
+        var wrapper = null,
+            input = null,
+            btn = null;
+        try {
+          wrapper = document.querySelector("#sentdetails_tree").appendChild(ru.cesar.overlay(bbox));
+          input = wrapper.appendChild(html`<input type="text" text-align="middle" data-src="${evt.target.id
+            }" data-maxtextwidth="${evt.target.dataset.maxtextwidth
+            }" style="max-width: ${bbox.width}px; min-width: 100px;" value=${value} />`);
+          btn = wrapper.appendChild(html`<button>OK</button>`);
+          // Show an <input> text here
+          // $(el).attr("contenteditable", "true");
+          btn.addEventListener("click", evt =>
+            document.querySelector("#overlay").remove());
+          input.focus();
+          input.setSelectionRange(0, value.length);
+          input.addEventListener("input", evt => {
+            const updateElem = document.querySelector(`#${evt.target.dataset.src}`),
+              maxTextWidth = evt.target.dataset.maxtextwidth
+                ? evt.target.dataset.maxtextwidth
+                : 0;
+            updateElem.textContent = updateElem.dataset.template.replace(
+              "{0}",
+              evt.target.value
+            ); //evt.target.value;
+            ru.cesar.adjustTextWidth(
+              updateElem,
+              updateElem.getAttribute("font-size"),
+              maxTextWidth
+            );
+          });
+        } catch (ex) {
+          private_methods.errMsg("node_click", ex);
+        }
+      },
+
+      adjustTextWidth: function (elem, fontSize, maxWidth) {
+        // native element
+        // fontSize in decimal inches
+        // maxWidth in decimal inches
+        elem.removeAttribute("lengthAdjust");
+        elem.removeAttribute("textLength");
+        if (
+          measureText({
+            value: elem.innerHTML,
+            fontSize: fontSize
+          }) > maxWidth
+        ) {
+          elem.setAttribute("lengthAdjust", "spacingAndGlyphs");
+          elem.setAttribute("textLength", maxWidth);
+        }
+      },
+
+      overlay: function (bbox) {
+        const ostyle = `
+              position: absolute;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              background: yellow;
+              `,
+                        style = `
+              position: absolute;
+              top: ${bbox.y}px;
+              left: ${bbox.x}px;
+              //margin: 2em;
+              padding: 1em;
+              max-width: ${bbox.width}px;
+              min-width: 100px;
+              background: lightgray;
+              border-radius: 10px;
+              border: black 1px solid;
+              text-align: center;
+              `,
+          o =html`<div id="overlay" style="${style}"><div style="${""}" id="obg" /></div>`;
+        return o;
+      },
+
+
       type_change: function (el) {
         // Figure out how we are called
         if (el.type === "change" || el.type === "keyup") {

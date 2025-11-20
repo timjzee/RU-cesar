@@ -17,23 +17,33 @@
     <!-- Information on this sentence -->
     <div class="row">
       <div class="col-md-10">
-      <span>Sentence number = {{sentence.order}}</span>
-      <span> ({{sentence.identifier}})</span>
-      <span>
-        <a class="btn btn-default btn-xs" id="sent_view_tree" 
-            onclick="ru.cesar.view_switch('sentdetails_tree_host', 'sentdetails_htable');"
-            title="tree">
-          <span class="glyphicon glyphicon-tree-conifer" aria-hidden="true"></span>
-        </a>
-        <a class="btn btn-default btn-xs" id="sent_view_htable" 
-            onclick="ru.cesar.view_switch('sentdetails_htable', 'sentdetails_tree_host');"
-            title="table">
-          <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
-        </a>
-      </span>
+        <span>Sentence number = {{sentence.order}}</span>
+        <span> ({{sentence.identifier}})</span>
+        <span>
+          <a class="btn btn-default btn-xs" id="sent_view_tree" 
+              onclick="ru.cesar.view_switch('sentdetails_tree_host', 'sentdetails_htable');"
+              title="tree">
+            <span class="glyphicon glyphicon-tree-conifer" aria-hidden="true"></span>
+          </a>
+          <a class="btn btn-default btn-xs" id="sent_view_htable" 
+              onclick="ru.cesar.view_switch('sentdetails_htable', 'sentdetails_tree_host');"
+              title="table">
+            <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+          </a>
+        </span>
+        {% if is_browser_editor %}
+          <span style="float: right;">
+            <!-- Button to switch to edit mode -->
+            <a role="button" class="btn btn-sm btn-primary edit-mode"
+               onclick="ru.cesar.browser_mode(this);">Edit</a>
+            <!-- Button to switch to view mode -->
+            <a role="button" class="btn btn-sm btn-default view-mode hidden"
+               onclick="ru.cesar.browser_mode(this);">View</a>
+          </span>
+        {% endif %}
       </div>
 
-      <!-- Download possibilities -->
+      <!-- Download and edit possibilities -->
       <div class="col-md-2" align="right">
         <form id="syntaxform" action="">
           {% csrf_token %}
