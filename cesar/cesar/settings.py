@@ -26,6 +26,11 @@ if "RU-cesar\\writable" in WRITABLE_DIR:
     # Need another string
     WRITABLE_DIR = os.path.abspath(os.path.join(BASE_DIR, "../../../writable/database/"))
 
+# Containerized Radboud Environment
+if "/var/writable" in WRITABLE_DIR:
+    WRITABLE_DIR = os.path.abspath(os.path.join(BASE_DIR, "../writable/database/"))
+    PROJECT_NAME = os.path.basename(os.path.dirname(os.path.abspath(__file__)))
+
 # Set the MEDIA_URL, which depends on the writable
 MEDIA_DIR = os.path.abspath(os.path.join(WRITABLE_DIR, "../media/"))
 # The MEDIA_ROOT is important for upload_to
