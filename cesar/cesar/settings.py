@@ -98,7 +98,7 @@ if "d:" in WRITABLE_DIR or "D:" in WRITABLE_DIR:
 #   an HTTP redirect is issued to the same URL with a slash appended.
 APPEND_SLASH = True
 
-ALLOWED_HOSTS = ['localhost', 'cesar.science.ru.nl']
+ALLOWED_HOSTS = ['localhost', 'cesar.science.ru.nl', 'dev.cesar.science.ru.nl']
 BLOCKED_IPS = []
 
 # Application definition
